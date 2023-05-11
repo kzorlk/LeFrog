@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 
 public class LeFrog extends Application {
 
-    //TODO: konn peaks keerama ja siis hüppama selles suunas kuhu ta vaatab
+    //TODO: konn peaks keerama ja siis hüppama selles suunas kuhu ta vaatab, aga ekraani pealt välja hüppamine oleks kehv
     private static void jump(ImageView frog) {
         double angle = Math.random() * 360 - 180;
         double length = 100 + Math.random() * 100;
@@ -32,15 +32,23 @@ public class LeFrog extends Application {
         rt.setByAngle(angle);
         rt.play();
 
+        TranslateTransition tt = new TranslateTransition(Duration.millis(200), frog);
+
         double xStart = frog.getX();
         double yStart = frog.getY();
-        double xEnd = xStart + Math.cos(frog.rotateProperty().doubleValue()) * length;
-        double yEnd = yStart + Math.sin(frog.rotateProperty().doubleValue()) * length;
 
-        TranslateTransition tt = new TranslateTransition(Duration.millis(200), frog);
-        tt.setToX(xEnd);
-        tt.setToY(yEnd);
+        for (int i = 0; i < 4; i++) {
+            double finalAngle = angle + i * 90;
+            double xEnd = xStart + Math.cos(frog.rotateProperty().doubleValue()) * length;
+            double yEnd = yStart + Math.sin(frog.rotateProperty().doubleValue()) * length;
+            if(xEnd < 1100 && yEnd < 700 && xEnd < 0 && yEnd < 0) {
+                tt.setToX(xEnd);
+                tt.setToY(yEnd);
+            }
+        }
 
+
+        rt.play();
         tt.play();
     }
     @Override

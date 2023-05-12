@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -14,40 +15,62 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LeFrog extends Application {
 
-    //TODO: konn peaks keerama ja siis hüppama selles suunas kuhu ta vaatab, aga ekraani pealt välja hüppamine oleks kehv
+    private static void wewewow(ImageView frog) {
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), frog);
+        tt.setByY(-200);
+        tt.setByX(-200);
+        tt.setAutoReverse(true);
+        tt.setCycleCount(Animation.INDEFINITE);
+        tt.play();
+    }
+
     private static void jump(ImageView frog) {
-        double angle = Math.random() * 360 - 180;
-        double length = 100 + Math.random() * 100;
 
         RotateTransition rt= new RotateTransition(Duration.millis(100), frog);
-        rt.setByAngle(angle);
-        rt.play();
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(200), frog);
 
-        double xStart = frog.getX();
-        double yStart = frog.getY();
-
-        for (int i = 0; i < 4; i++) {
-            double finalAngle = angle + i * 90;
-            double xEnd = xStart + Math.cos(frog.rotateProperty().doubleValue()) * length;
-            double yEnd = yStart + Math.sin(frog.rotateProperty().doubleValue()) * length;
-            if(xEnd < 1100 && yEnd < 700 && xEnd < 0 && yEnd < 0) {
-                tt.setToX(xEnd);
-                tt.setToY(yEnd);
+        double currentX = frog.getX();
+        double currentY = frog.getY();
+        double byX;
+        double byY;
+        do {
+            byX = Math.random() * 100 + 30;
+            byY = Math.random() * 100 + 30;
+            int randint = (int)(Math.random() * 4);
+            if (randint % 2 == 0) {
+                byX = -byX;
+            }
+            if (randint > 1) {
+                byY = -byY;
             }
         }
+        while (currentX + byX < 0 && currentX + byX > 600 && currentY + byY < 0 && currentY + byY > 600);
 
+        double angle1 = Math.toDegrees(Math.atan(-byY/byX));
+        double angle;
+        if (byX >= 0 && -byY >= 0) angle = angle1;
+        else if (byX < 0 && -byY < 0) angle = angle1 + 180;
+        else if (byX < 0) angle = angle1 + 90;
+        else angle = angle1;
+        System.out.println("byX: " + byX + ", byY: " + -byY + ", angle: " + angle);
+        rt.setByAngle(frog.getRotate() + angle);
 
+        tt.setByX(byX);
+        tt.setByY(byY);
         rt.play();
         tt.play();
     }
@@ -67,6 +90,15 @@ public class LeFrog extends Application {
         frog.setPreserveRatio(true);
         frog.setFitWidth(60);
 
+        AtomicInteger points = new AtomicInteger();
+        Text pointsText = new Text("0");
+        pointsText.setFill(Color.BLACK);
+        pointsText.setX(960);
+        pointsText.setY(100);
+        pointsText.setVisible(true);
+        pointsText.setFont(new Font("Courier New", 100));
+        pointsText.setVisible(false);
+
         frog.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent firstClick) {
@@ -74,15 +106,21 @@ public class LeFrog extends Application {
                 ft.setFromValue(1);
                 ft.setToValue(0);
                 ft.play();
+                pointsText.setVisible(true);
+
                 frog.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent click) {
                         jump(frog);
+                        //wewewow(frog);
+                        points.getAndIncrement();
+                        pointsText.setText(String.valueOf(points));
                     }
                 });
             }
         });
         root.getChildren().add(frog);
+        root.getChildren().add(pointsText);
 
         stage.setTitle("Le Frog");
         stage.setScene(new Scene(root, 1200, 800));

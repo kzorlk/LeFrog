@@ -131,7 +131,7 @@ public class LeFrog extends Application {
                         //wewewow(frog);
                         points.getAndIncrement();
                         pointsText.setText(String.valueOf(points));
-                        if (frog.getX() + frog.getTranslateX() > 1100 || frog.getY() + frog.getTranslateY() > 700|| frog.getX() + frog.getTranslateX() < 50 || frog.getY() + frog.getTranslateY() < 50)
+                        if (frog.getX() + frog.getTranslateX() > 1100 || frog.getY() + frog.getTranslateY() > 700 || frog.getX() + frog.getTranslateX() < 50 || frog.getY() + frog.getTranslateY() < 50)
                             quitPilt.setVisible(true);
                     }
                 });

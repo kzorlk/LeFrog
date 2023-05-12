@@ -43,22 +43,15 @@ public class LeFrog extends Application {
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(200), frog);
 
-        double currentX = frog.getX();
-        double currentY = frog.getY();
-        double byX;
-        double byY;
-        do {
-            byX = Math.random() * 100 + 30;
-            byY = Math.random() * 100 + 30;
-            int randint = (int)(Math.random() * 4);
-            if (randint % 2 == 0) {
-                byX = -byX;
-            }
-            if (randint > 1) {
-                byY = -byY;
-            }
+        double byX = Math.random() * 100 + 30;
+        double byY = Math.random() * 100 + 30;
+        int randint = (int)(Math.random() * 4);
+        if (randint % 2 == 0) {
+            byX = -byX;
         }
-        while (currentX + byX < 0 && currentX + byX > 600 && currentY + byY < 0 && currentY + byY > 600);
+        if (randint > 1) {
+            byY = -byY;
+        }
 
         double angle1 = Math.toDegrees(Math.atan(-byY/byX));
         double angle;

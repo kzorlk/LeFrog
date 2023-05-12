@@ -5,12 +5,14 @@ import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -22,8 +24,9 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LeFrog extends Application {
@@ -92,6 +95,16 @@ public class LeFrog extends Application {
         pointsText.setFont(new Font("Courier New", 100));
         pointsText.setVisible(false);
 
+        Button quit = new Button("arrêter");
+        quit.setVisible(true);
+        quit.setOnAction(actionEvent -> {
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("edetabel.txt", true)));) {
+                out.println(pointsText.getText() + " punkti " + LocalDateTime.now());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Platform.exit();
+        });
         frog.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent firstClick) {
@@ -108,10 +121,14 @@ public class LeFrog extends Application {
                         //wewewow(frog);
                         points.getAndIncrement();
                         pointsText.setText(String.valueOf(points));
+                        if (frog.getX() > 1200 || frog.getY() > 800) {
+                            quit.setVisible(true);
+                        }
                     }
                 });
             }
         });
+        root.getChildren().add(quit);
         root.getChildren().add(frog);
         root.getChildren().add(pointsText);
 

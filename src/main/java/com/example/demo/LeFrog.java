@@ -98,8 +98,10 @@ public class LeFrog extends Application {
 
         ImageView quitPilt = new ImageView(new Image(new FileInputStream("sprites\\quit.png")));
         quitPilt.setPreserveRatio(true);
+        quitPilt.setFitWidth(250);
         quitPilt.setX(10);
-        quitPilt.setY(600);
+        quitPilt.setY(25);
+        quitPilt.setVisible(false);
         root.getChildren().add(quitPilt);
         quitPilt.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -129,6 +131,8 @@ public class LeFrog extends Application {
                         //wewewow(frog);
                         points.getAndIncrement();
                         pointsText.setText(String.valueOf(points));
+                        if (frog.getX() + frog.getTranslateX() > 1100 || frog.getY() + frog.getTranslateY() > 700|| frog.getX() + frog.getTranslateX() < 50 || frog.getY() + frog.getTranslateY() < 50)
+                            quitPilt.setVisible(true);
                     }
                 });
             }

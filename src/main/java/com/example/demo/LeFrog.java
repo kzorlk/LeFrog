@@ -42,13 +42,13 @@ public class LeFrog extends Application {
 
     private static void jump(ImageView frog) {
 
-        RotateTransition rt= new RotateTransition(Duration.millis(100), frog);
+        RotateTransition rt = new RotateTransition(Duration.millis(100), frog);
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(200), frog);
 
         double byX = Math.random() * 100 + 30;
         double byY = Math.random() * 100 + 30;
-        int randint = (int)(Math.random() * 4);
+        int randint = (int) (Math.random() * 4);
         if (randint % 2 == 0) {
             byX = -byX;
         }
@@ -56,7 +56,7 @@ public class LeFrog extends Application {
             byY = -byY;
         }
 
-        double angle1 = Math.toDegrees(Math.atan(-byY/byX));
+        double angle1 = Math.toDegrees(Math.atan(-byY / byX));
         double angle;
         if (byX >= 0 && -byY >= 0) angle = angle1;
         else if (byX < 0 && -byY < 0) angle = angle1 + 180;
@@ -70,6 +70,7 @@ public class LeFrog extends Application {
         rt.play();
         tt.play();
     }
+
     @Override
     public void start(Stage stage) throws FileNotFoundException {
         Group root = new Group();
@@ -95,16 +96,23 @@ public class LeFrog extends Application {
         pointsText.setFont(new Font("Courier New", 100));
         pointsText.setVisible(false);
 
-        Button quit = new Button("arrêter");
-        quit.setVisible(true);
-        quit.setOnAction(actionEvent -> {
-            try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("edetabel.txt", true)));) {
-                out.println(pointsText.getText() + " punkti " + LocalDateTime.now());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        ImageView quitPilt = new ImageView(new Image(new FileInputStream("sprites\\quit.png")));
+        quitPilt.setPreserveRatio(true);
+        quitPilt.setX(10);
+        quitPilt.setY(600);
+        root.getChildren().add(quitPilt);
+        quitPilt.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("edetabel.txt", true)));) {
+                    out.println(pointsText.getText() + " punkti " + LocalDateTime.now());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                Platform.exit();
             }
-            Platform.exit();
         });
+
         frog.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent firstClick) {
@@ -121,14 +129,11 @@ public class LeFrog extends Application {
                         //wewewow(frog);
                         points.getAndIncrement();
                         pointsText.setText(String.valueOf(points));
-                        if (frog.getX() > 1200 || frog.getY() > 800) {
-                            quit.setVisible(true);
-                        }
                     }
                 });
             }
         });
-        root.getChildren().add(quit);
+
         root.getChildren().add(frog);
         root.getChildren().add(pointsText);
 
